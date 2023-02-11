@@ -1,7 +1,16 @@
 .home-mainarea{
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+
+    .section-area_card{
+        display: flex;
+        justify-items: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin: 1rem auto;
+        width: 80%;
+    }
 }
