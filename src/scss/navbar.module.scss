@@ -1,0 +1,12 @@
+.navbar{
+    padding: 1rem;
+    background-color: aqua;
+    .navbar_brand{
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        .navbar_brand-img{
+            width: 40px;
+        }
+    }
+}
