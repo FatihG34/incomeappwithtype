@@ -22,13 +22,19 @@ import card from '../scss/card.module.scss';
 // import { useSelector } from 'react-redux';
 import { useAppDispatch,useAppSelector } from '../app/hooks';
 
-import { selectIncome, totalIncrement } from '../features/income/incomeSlice';
+import { selectIncome, totalIncrement,addNode } from '../features/income/incomeSlice';
 
 const More = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const dispatch = useAppDispatch()
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
+    dispatch(addNode({ id: 3,
+        name:'Canan',
+        incomeValue:0,
+        totalValue:0,
+        children: []}))
   };
 
   const open = Boolean(anchorEl);
@@ -67,13 +73,14 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 const Cards = () => {
-  const [incomeValue, setIncomeValue] = React.useState<number>(0)
+  const [incomeValues, setIncomeValues] = React.useState<number>(0)
   const dispatch = useAppDispatch()
-  const {totalValue} = useAppSelector(selectIncome)
-  // const {incomeIncrement} = useAppSelector(selectIncome)
+  const {tree} = useAppSelector(selectIncome)
+  const {id, name, incomeValue, totalValue} = tree[0]
+  console.log(tree)
 
   const handleChange = (e:any)=>{
-    setIncomeValue(e.target.value);
+    setIncomeValues(e.target.value);
     // dispatch(incomeIncrement(Number(e.target.value)))
     dispatch(totalIncrement(Number(e.target.value)))
   }
@@ -96,7 +103,7 @@ const Cards = () => {
       <CardContent>
         <div className={card['inputDiv']}>
         <label htmlFor="incomeValue">Self Income :</label>
-        <input type="number" name="incomeValue" id="incomeValue" className={card['incomeInput']} value={incomeValue}  onChange={(e)=>handleChange(e) }/>
+        <input type="number" name="incomeValue" id="incomeValue" className={card['incomeInput']} value={incomeValues}  onChange={(e)=>handleChange(e) }/>
         </div>
         <hr />
         <div className={card['inputDiv']}>
