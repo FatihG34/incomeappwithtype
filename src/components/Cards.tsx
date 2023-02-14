@@ -2,17 +2,17 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
+// import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
+// import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import { red } from '@mui/material/colors';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
+// import ShareIcon from '@mui/icons-material/Share';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -72,34 +72,46 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-const Cards = () => {
+
+
+interface TreeNodeProps {
+  node: {
+      id: number;
+      name:string;
+      incomeValue:number;
+      totalValue:number;
+      children: Array<TreeNodeProps['node']>;
+  };
+}
+const Cards: React.FC<TreeNodeProps> = ({ node }) => {
   const [incomeValues, setIncomeValues] = React.useState<number>(0)
   const dispatch = useAppDispatch()
-  const {tree} = useAppSelector(selectIncome)
-  const {id, name, incomeValue, totalValue} = tree[0]
-  console.log(tree)
+
 
   const handleChange = (e:any)=>{
-    setIncomeValues(e.target.value);
+    // const target = e.target as typeof e.target & {
+    //   incomeValue: { value: number };
+    // };
+
+    setIncomeValues(Number(e.target.value));
+    console.log(typeof incomeValues)
     // dispatch(incomeIncrement(Number(e.target.value)))
-    dispatch(totalIncrement(Number(e.target.value)))
+    // dispatch(totalIncrement({Number(e.target.value)}))
   }
 
   return (
-    <Card sx={{ maxWidth: 300 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap:"1rem" }}>
+    <Card sx={{ maxWidth: 300 }} >
       <Box style={{display:'flex',justifyContent:'space-between', padding:'1rem'}}>
         <Avatar sx={{ bgcolor:' #006aff8e' }} aria-label="recipe">
           
         </Avatar>
-            <input type="text" value={"name"}  className={card['textInput']} />
+            <input type="text" value={node.name}  className={card['textInput']} />
 {/* onChange={()=>dispatch(null)} */}
         <IconButton aria-label="settings" style={{cursor:'pointer'}}>
           <More />
         </IconButton>
       </Box>
-      <CardHeader>
-        <input type="text" value={'ssdfgh'} />
-      </CardHeader>
       <CardContent>
         <div className={card['inputDiv']}>
         <label htmlFor="incomeValue">Self Income :</label>
@@ -108,13 +120,13 @@ const Cards = () => {
         <hr />
         <div className={card['inputDiv']}>
         <label htmlFor="totalValue">Total Income :</label>
-        <input type="text" name="totalValue" id="totalValue" className={card['incomeInput']} value={totalValue} />
+        <input type="text" name="totalValue" id="totalValue" className={card['incomeInput']} value={node.totalValue} />
         </div>
-        <Typography variant="body2" color="text.secondary">
+        {/* <Typography variant="body2" color="text.secondary">
           This impressive paella is a perfect party dish and a fun meal to cook
           together with your guests. Add 1 cup of frozen peas along with the mussels,
           if you like.
-        </Typography>
+        </Typography> */}
       </CardContent>
       {/* <CardActions disableSpacing style={{display:'flex',justifyContent:'space-between', padding:'1rem'}}>
         <IconButton aria-label="add to favorites">
@@ -126,6 +138,12 @@ const Cards = () => {
 
       </CardActions> */}
     </Card>
+    {
+      node.children.map((child)=>(
+        <Cards key={child.id} node={child}/>
+      ))
+    }
+    </div>
   );
 }
 
