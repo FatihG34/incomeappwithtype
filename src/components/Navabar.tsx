@@ -8,7 +8,7 @@ const Navabar = () => {
     <nav className={navbar.navbar}>
       <div className={navbar['navbar_brand']} onClick={()=>navigate("/")}>
         <picture>
-          <img className={navbar['navbar_brand-img']} src={Icon} alt="income image"/>
+          <img className={navbar['navbar_brand-img']} src={Icon} alt="income"/>
         </picture>
         <h1>IncomeApp</h1>
         </div>

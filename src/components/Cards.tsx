@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import card from '../scss/card.module.scss';
-import { useAppDispatch,useAppSelector } from '../app/hooks';
-import { addItem, deleteItem, selectIncome, setTotalValue, TreeNode } from '../features/income/incomeSlice';
+// import card from '../scss/card.module.scss';
+import { useAppDispatch } from '../app/hooks';
+import { addItem, deleteItem, setTotalValue } from '../features/income/incomeSlice';
 import { FaMinus,FaPlus } from 'react-icons/fa';
 import {GiCheckMark} from 'react-icons/gi'
 
@@ -18,7 +18,7 @@ const Cards: React.FC<TreeNodeProps> = ({ node }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [incomeValues, setIncomeValues] = useState<number>(0)
   const dispatch = useAppDispatch()
-  const tree = useAppSelector(selectIncome);
+  // const tree = useAppSelector(selectIncome);
 
   const handleAddNodeItemClick = (id:number)=>{
     dispatch(addItem(id))
@@ -48,13 +48,13 @@ const renderChildren = () => {
     }
     return null;
   };
-const newNodes = {
-  id: Number(new Date()),
-  name:'New Member',
-  incomeValue:0,
-  children: [],
-  totalValue:0,
-}
+// const newNodes = {
+//   id: Number(new Date()),
+//   name:'New Member',
+//   incomeValue:0,
+//   children: [],
+//   totalValue:0,
+// }
 
 
   return (

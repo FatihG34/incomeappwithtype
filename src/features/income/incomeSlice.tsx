@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction, createAsyncThunk, createAction } from "@reduxjs/toolkit";
-import { AppDispatch, RootState } from "../../app/store";
+import { createSlice, PayloadAction, createAction } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 
 export interface TreeNode {
   id: number;
