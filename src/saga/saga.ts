@@ -1,6 +1,6 @@
-import { put, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeLatest, takeEvery} from 'redux-saga/effects';
 import { PayloadAction } from "@reduxjs/toolkit";
-import {setData,updateItem,deleteItem,addItem, TreeNode} from '../features/income/incomeSlice'
+import {updateItem,deleteItem,addItem, TreeNode,setTotalValue,SendedValue} from '../features/income/incomeSlice'
 
 
 
@@ -18,6 +18,10 @@ function* addTreeItemSaga(action: PayloadAction<string>) {
   yield put(addItem(newTreeItem.id));
 }
 
+function* calcTotalValue(action:PayloadAction<SendedValue>) {
+    yield put(setTotalValue(action.payload));
+}
+
 function* removeTreeItemSaga(action: PayloadAction<number>) {
   // TreeItem objesini silen bir eylem gönderir
   yield put(deleteItem(action.payload));
@@ -29,12 +33,13 @@ function* updateTreeItemSaga(action: PayloadAction<TreeNode>) {
 }
 
 export function* treeSaga() {
+  yield takeLatest("income/setTotalValue", calcTotalValue);
   // ekleme işlemi dinleyicisi oluşturur
-  yield takeLatest("tree/addTreeItemRequest", addTreeItemSaga);
+  // yield takeLatest("income/addItem", addTreeItemSaga);
 
   // silme işlemi dinleyicisi oluşturur
-  yield takeLatest("tree/removeTreeItemRequest", removeTreeItemSaga);
+  // yield takeLatest("income/deleteItem", removeTreeItemSaga);
 
   // güncelleme işlemi dinleyicisi oluşturur
-  yield takeLatest("tree/updateTreeItemRequest", updateTreeItemSaga);
+  // yield takeLatest("income/updateItem", updateTreeItemSaga);
 }

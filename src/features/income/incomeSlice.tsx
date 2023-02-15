@@ -88,15 +88,18 @@ export const updateTotalValue = createAction("income/updateTotalValue");
 
 const calculateTotalValue = (node: TreeNode): number => {
   if (!node.children) {
-    return node.incomeValue;
+    node.totalValue = 0;
+    node.totalValue += node.incomeValue;
+    return node.totalValue;
   }
-  let sum = node.incomeValue;
+  node.totalValue = 0;
+  node.totalValue += node.incomeValue;
   for (const child of node.children) {
-    sum += calculateTotalValue(child);
+    node.totalValue += calculateTotalValue(child);
   }
-  return sum;
+  return node.totalValue;
 };
-interface SendedValue {
+export interface SendedValue {
   id: number;
   value: number;
 }

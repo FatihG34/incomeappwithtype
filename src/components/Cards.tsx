@@ -66,8 +66,8 @@ const renderChildren = () => {
         <h3>
         {node.name}
         </h3>
-        <form style={{margin:'.3rem 0'}}  onSubmit={(e)=>handleSubmit(e,node.id,incomeValues)}>Income Value :
-        <input type="text" name='incomeValue' value={incomeValues} style={{border:'none', fontSize:'1rem', marginLeft:'4px', width:'50%'}} onChange={(e)=>setIncomeValues(Number(e.target.value))} />
+        <form style={{margin:'.3rem 0'}}  onSubmit={(e)=>handleSubmit(e,node.id,incomeValues)}> <label htmlFor={String(node.id)}> Income Value :</label>
+        <input type="text" name='incomeValue' id={String(node.id)} value={incomeValues} style={{border:'none', fontSize:'1rem', marginLeft:'4px', width:'50%'}} onChange={(e)=>setIncomeValues(Number(e.target.value))} />
         
          <button type="submit" style={{border:'none', backgroundColor:'greenyellow', padding:'.1rem', marginLeft:'2px', cursor:'pointer'}}><GiCheckMark/></button>
          </form>
