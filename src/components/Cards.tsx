@@ -1,149 +1,86 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-// import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-// import Collapse from '@mui/material/Collapse';
-import Avatar from '@mui/material/Avatar';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-// import { red } from '@mui/material/colors';
-// import FavoriteIcon from '@mui/icons-material/Favorite';
-// import ShareIcon from '@mui/icons-material/Share';
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Box from '@mui/material/Box';
-import Popper from '@mui/material/Popper';
+import { useState } from 'react';
 import card from '../scss/card.module.scss';
-// import { useSelector } from 'react-redux';
 import { useAppDispatch,useAppSelector } from '../app/hooks';
-
-import { selectIncome, totalIncrement,addNode } from '../features/income/incomeSlice';
-
-const More = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const dispatch = useAppDispatch()
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-    dispatch(addNode({ id: 3,
-        name:'Canan',
-        incomeValue:0,
-        totalValue:0,
-        children: []}))
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'popper' : undefined;
-
-  return (
-    <div className='' style={{cursor:'pointer'}}>
-      <button aria-describedby={id} type="button" onClick={handleClick}>
-        <MoreVertIcon style={{cursor:'pointer'}} />
-      </button>
-      <Popper id={id} open={open} anchorEl={anchorEl} placement={'right-end'} sx={{ boxShadow: 4 }}>
-        <Box sx={{ p: 1, bgcolor: 'background.paper', cursor: 'pointer' }} onClick={handleClick}>
-          <AddCircleOutlineIcon /> <span>Add a Member</span>
-        </Box>
-        <Box sx={{ p: 1, bgcolor: 'background.paper', cursor: 'pointer' }} onClick={handleClick}>
-          <DeleteForeverIcon /> Remove This Member
-        </Box>
-      </Popper>
-    </div>
-  );
-}
-
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
-
-
+import { addItem, deleteItem, selectIncome, setTotalValue, TreeNode } from '../features/income/incomeSlice';
+import { FaMinus,FaPlus } from 'react-icons/fa';
+import {GiCheckMark} from 'react-icons/gi'
 
 interface TreeNodeProps {
   node: {
       id: number;
       name:string;
       incomeValue:number;
-      totalValue:number;
-      children: Array<TreeNodeProps['node']>;
+      children?: Array<TreeNodeProps['node']>;
+      totalValue?:number;
   };
 }
 const Cards: React.FC<TreeNodeProps> = ({ node }) => {
-  const [incomeValues, setIncomeValues] = React.useState<number>(0)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [incomeValues, setIncomeValues] = useState<number>(0)
   const dispatch = useAppDispatch()
+  const tree = useAppSelector(selectIncome);
 
-
-  const handleChange = (e:any)=>{
-    // const target = e.target as typeof e.target & {
-    //   incomeValue: { value: number };
-    // };
-
-    setIncomeValues(Number(e.target.value));
-    console.log(typeof incomeValues)
-    // dispatch(incomeIncrement(Number(e.target.value)))
-    // dispatch(totalIncrement({Number(e.target.value)}))
+  const handleAddNodeItemClick = (id:number)=>{
+    dispatch(addItem(id))
   }
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap:"1rem" }}>
-    <Card sx={{ maxWidth: 300 }} >
-      <Box style={{display:'flex',justifyContent:'space-between', padding:'1rem'}}>
-        <Avatar sx={{ bgcolor:' #006aff8e' }} aria-label="recipe">
-          
-        </Avatar>
-            <input type="text" value={node.name}  className={card['textInput']} />
-{/* onChange={()=>dispatch(null)} */}
-        <IconButton aria-label="settings" style={{cursor:'pointer'}}>
-          <More />
-        </IconButton>
-      </Box>
-      <CardContent>
-        <div className={card['inputDiv']}>
-        <label htmlFor="incomeValue">Self Income :</label>
-        <input type="number" name="incomeValue" id="incomeValue" className={card['incomeInput']} value={incomeValues}  onChange={(e)=>handleChange(e) }/>
-        </div>
-        <hr />
-        <div className={card['inputDiv']}>
-        <label htmlFor="totalValue">Total Income :</label>
-        <input type="text" name="totalValue" id="totalValue" className={card['incomeInput']} value={node.totalValue} />
-        </div>
-        {/* <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
-        </Typography> */}
-      </CardContent>
-      {/* <CardActions disableSpacing style={{display:'flex',justifyContent:'space-between', padding:'1rem'}}>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="delete">
-          <ShareIcon />
-        </IconButton>
+  const handleDeleteClick = () => {
+    dispatch(deleteItem(node.id));
+  };
 
-      </CardActions> */}
-    </Card>
-    {
-      node.children.map((child)=>(
-        <Cards key={child.id} node={child}/>
-      ))
+  const handleSubmit=(e:any, id:number, value:number)=>{
+        e.preventDefault();
+        const sendedValue ={id, value}
+        dispatch(setTotalValue(sendedValue))
+        setIncomeValues(Number(''))
+  }
+
+
+const renderChildren = () => {
+    if (node.children && node.children.length > 0) {
+      return (
+        <ul>
+          {node.children.map((child) => (
+            <Cards key={child.id} node={child} />
+          ))}
+        </ul>
+      );
     }
-    </div>
+    return null;
+  };
+const newNodes = {
+  id: Number(new Date()),
+  name:'New Member',
+  incomeValue:0,
+  children: [],
+  totalValue:0,
+}
+
+
+  return (
+     <li style={{margin:'.5rem .5rem'}}>
+      <div style={{padding:'1rem', border:'1px solid aqua', borderRadius:'1rem'}}>
+        <span onClick={() => setIsExpanded(!isExpanded)} style={{cursor:'pointer'}}>
+          {isExpanded ? <FaMinus /> : <FaPlus />}
+        </span>
+        <h3>
+        {node.name}
+        </h3>
+        <form style={{margin:'.3rem 0'}}  onSubmit={(e)=>handleSubmit(e,node.id,incomeValues)}>Income Value :
+        <input type="text" name='incomeValue' value={incomeValues} style={{border:'none', fontSize:'1rem', marginLeft:'4px', width:'50%'}} onChange={(e)=>setIncomeValues(Number(e.target.value))} />
+        
+         <button type="submit" style={{border:'none', backgroundColor:'greenyellow', padding:'.1rem', marginLeft:'2px', cursor:'pointer'}}><GiCheckMark/></button>
+         </form>
+
+        <p>Current Income Value :  {node.incomeValue}</p>
+        <p>Total Value : {node.totalValue}</p>
+        <div style={{display:'flex', gap:'1rem', marginTop:'.3rem'}}>
+          <button style={{border:'none', backgroundColor:'violet', borderRadius:'1rem', padding:'.5rem', cursor:'pointer'}} type='button' onClick={()=>handleAddNodeItemClick(node.id)}>Add</button>
+          <button style={{border:'none', backgroundColor:'orange', borderRadius:'1rem', padding:'.5rem', cursor:'pointer'}} type='button' onClick={handleDeleteClick}>Delete</button>
+        </div>
+      </div>
+    {isExpanded && renderChildren()}
+    </li>
   );
 }
 
