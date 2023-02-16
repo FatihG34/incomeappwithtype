@@ -33,7 +33,7 @@ function* updateTreeItemSaga(action: PayloadAction<TreeNode>) {
 }
 
 export function* treeSaga() {
-  yield takeLatest("income/setTotalValue", calcTotalValue);
+  yield takeEvery("income/setTotalValue", calcTotalValue);
   // ekleme işlemi dinleyicisi oluşturur
   // yield takeLatest("income/addItem", addTreeItemSaga);
 

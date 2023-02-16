@@ -5,8 +5,8 @@ export interface TreeNode {
   id: number;
   name: string;
   incomeValue: number;
-  children?: TreeNode[];
-  totalValue?: number;
+  children: TreeNode[];
+  totalValue: number;
 }
 
 
@@ -18,29 +18,36 @@ const initialState: IncomeState = {
     {
       id: 1,
       name: 'Node 1',
-      incomeValue: 10,
+      incomeValue: 0,
       children: [
         {
           id: 2,
           name: 'Node 1.1',
-          incomeValue: 5,
+          incomeValue: 0,
+          totalValue:0,
           children: [
             {
               id: 3,
               name: 'Node 1.1.1',
-              incomeValue: 2,
+              incomeValue: 0,
+              children:[],
+              totalValue:0
             },
             {
               id: 4,
               name: 'Node 1.1.2',
-              incomeValue: 3,
+              incomeValue: 0,
+              children:[],
+              totalValue:0
             },
           ],
         },
         {
           id: 5,
           name: 'Node 1.2',
-          incomeValue: 3,
+          incomeValue: 0,
+          children:[],
+          totalValue:0
         },
       ],
       totalValue: 120,
@@ -48,34 +55,43 @@ const initialState: IncomeState = {
     {
       id: 6,
       name: 'Node 2',
-      incomeValue: 7,
+      incomeValue: 0,
       children: [
         {
           id: 7,
           name: 'Node 2.1',
-          incomeValue: 4,
+          incomeValue: 0,
+          totalValue:0,
           children: [
             {
               id: 8,
               name: 'Node 2.1.1',
-              incomeValue: 1,
+              incomeValue: 0,
+              children:[],
+              totalValue:0
             },
             {
               id: 9,
               name: 'Node 2.1.2',
-              incomeValue: 2,
+              incomeValue: 0,
+              children:[],
+              totalValue:0
             },
             {
               id: 10,
               name: 'Node 2.1.3',
-              incomeValue: 1,
+              incomeValue: 0,
+              children:[],
+              totalValue:0
             },
           ],
         },
         {
           id: 11,
           name: 'Node 2.2',
-          incomeValue: 3,
+          incomeValue: 0,
+          children:[],
+          totalValue:0
         },
       ],
       totalValue: 220,
@@ -88,11 +104,9 @@ export const updateTotalValue = createAction("income/updateTotalValue");
 
 const calculateTotalValue = (node: TreeNode): number => {
   if (!node.children) {
-    node.totalValue = 0;
     node.totalValue += node.incomeValue;
     return node.totalValue;
   }
-  node.totalValue = 0;
   node.totalValue += node.incomeValue;
   for (const child of node.children) {
     node.totalValue += calculateTotalValue(child);
@@ -111,22 +125,30 @@ export const incomeSlice = createSlice({
   initialState,
   reducers: {
     setTotalValue(state, action: PayloadAction<SendedValue>) {
-      const setTotal = (items: TreeNode[]) => {
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          if (item.id === action.payload.id) {
-            if(!item.totalValue){
-              item.totalValue = 0
-            }
-            item.totalValue += action.payload.value;
-            item.incomeValue = action.payload.value
-            break;
-          } else if(item.children){
-            setTotal(item.children)
+      const calculateTotalValue = (node: TreeNode): number => {
+          let total = node.incomeValue;
+          for (let i = 0; i < node.children.length; i++) {
+            total += calculateTotalValue(node.children[i]);
           }
-        }
-      };
-      setTotal(state.tree);
+          node.totalValue += total;
+          return total;
+      }
+      const setTotal = (items: TreeNode[]) => {
+            for (let i = 0; i < items.length; i++) {
+              const item = items[i];
+              if (item.id === action.payload.id) {
+                item.incomeValue = action.payload.value;
+                break;
+              } else if (item.children) {
+                setTotal(item.children);
+              }
+            }
+          };
+
+          setTotal(state.tree);
+          for (let i = 0; i < state.tree.length; i++) {
+            calculateTotalValue(state.tree[i]);
+          }
     },
     setData(state, action: PayloadAction<TreeNode>) {
       state.tree.push(action.payload);
