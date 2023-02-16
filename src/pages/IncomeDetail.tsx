@@ -12,7 +12,7 @@ const IncomeDetail:FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
 
-console.log(tree)
+// console.log(tree)
 // console.log(treeNodes)
 
   return (

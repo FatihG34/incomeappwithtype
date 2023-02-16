@@ -14,8 +14,6 @@ export const store = configureStore({
 // saga.run(treeSaga)
 
 
-export const { dispatch, getState } = store;
-
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

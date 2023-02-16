@@ -9,7 +9,6 @@ export interface TreeNode {
   totalValue: number;
 }
 
-
 interface IncomeState {
   tree: TreeNode[];
 }
@@ -99,26 +98,10 @@ const initialState: IncomeState = {
   ]
 };
 
-
-export const updateTotalValue = createAction("income/updateTotalValue");
-
-const calculateTotalValue = (node: TreeNode): number => {
-  if (!node.children) {
-    node.totalValue += node.incomeValue;
-    return node.totalValue;
-  }
-  node.totalValue += node.incomeValue;
-  for (const child of node.children) {
-    node.totalValue += calculateTotalValue(child);
-  }
-  return node.totalValue;
-};
 export interface SendedValue {
   id: number;
   value: number;
 }
-
-
 
 export const incomeSlice = createSlice({
   name: 'income',
@@ -205,22 +188,7 @@ export const incomeSlice = createSlice({
       };
       addItemToNode(state.tree);
     },
-
   },
-  extraReducers: (builder) => {
-    builder.addCase(updateTotalValue, (state) => {
-      const updateTotalValues = (items: TreeNode[]) => {
-        for (const item of items) {
-          item.totalValue = calculateTotalValue(item);
-          if (item.children) {
-            updateTotalValues(item.children);
-          }
-        }
-      };
-      updateTotalValues(state.tree);
-    });
-  },
-
 })
 
 
